@@ -37,18 +37,18 @@ module ao486 (
     input   [7:0]       interrupt_vector,
     output              interrupt_done,
     
-    //-------------------------------------------------------------------------- Altera Avalon memory bus
-    output      [29:0]  avm_address,
-    output      [31:0]  avm_writedata,
-    output      [3:0]   avm_byteenable,
-    output      [2:0]   avm_burstcount,
-    output              avm_write,
-    output              avm_read,
-    
-    input               avm_waitrequest,
-    input               avm_readdatavalid,
-    input       [31:0]  avm_readdata,
-    
+//    //-------------------------------------------------------------------------- Altera Avalon memory bus
+//    output      [29:0]  avm_address,
+//    output      [31:0]  avm_writedata,
+//    output      [3:0]   avm_byteenable,
+//    output      [2:0]   avm_burstcount,
+//    output              avm_write,
+//    output              avm_read,
+//    
+//    input               avm_waitrequest,
+//    input               avm_readdatavalid,
+//    input       [31:0]  avm_readdata,
+//    
     //-------------------------------------------------------------------------- Altera Avalon io bus
     output  [15:0]      avalon_io_address,
     output  [3:0]       avalon_io_byteenable,
@@ -61,6 +61,53 @@ module ao486 (
     output  [31:0]      avalon_io_writedata,
     
     input               avalon_io_waitrequest,
+
+    //RESP:
+    output              writeburst_do,
+    input               writeburst_done,
+    
+    output      [31:0]  writeburst_address,
+    output      [1:0]   writeburst_dword_length,
+    output      [3:0]   writeburst_byteenable_0,
+    output      [3:0]   writeburst_byteenable_1,
+    output      [55:0]  writeburst_data,
+    //END
+    
+    //RESP:
+    output              writeline_do,
+    input               writeline_done,
+    
+    output      [31:0]  writeline_address,
+    output      [127:0] writeline_line,
+    //END
+    
+    //RESP:
+    output              readburst_do,
+    input               readburst_done,
+    
+    output      [31:0]  readburst_address,
+    output      [1:0]   readburst_dword_length,
+    output      [3:0]   readburst_byte_length,
+    input      [95:0]   readburst_data,
+    //END
+    
+    //RESP:
+    output              readline_do,
+    input               readline_done,
+    
+    output       [31:0] readline_address,
+    input      [127:0]  readline_line,
+    //END
+    
+    //RESP:
+    output              readcode_do,
+    input               readcode_done,
+    
+    output      [31:0]  readcode_address,
+    input      [127:0]  readcode_line,
+    input      [31:0]   readcode_partial,
+    input               readcode_partial_done,
+    //END
 
     output  [31:0]      eip,
     output  [1:0]       state_transducer
@@ -552,15 +599,62 @@ memory memory_inst(
     .wr_reset                      (wr_reset),                      //input
     
     // avalon master
-    .avm_address                   (avm_address_pre),                   //output [31:0]
-    .avm_writedata                 (avm_writedata),                 //output [31:0]
-    .avm_byteenable                (avm_byteenable),                //output [3:0]
-    .avm_burstcount                (avm_burstcount),                //output [2:0]
-    .avm_write                     (avm_write),                     //output
-    .avm_read                      (avm_read),                      //output
-    .avm_waitrequest               (avm_waitrequest),               //input
-    .avm_readdatavalid             (avm_readdatavalid),             //input
-    .avm_readdata                  (avm_readdata),                  //input [31:0]
+//    .avm_address                   (avm_address_pre),                   //output [31:0]
+//    .avm_writedata                 (avm_writedata),                 //output [31:0]
+//    .avm_byteenable                (avm_byteenable),                //output [3:0]
+//    .avm_burstcount                (avm_burstcount),                //output [2:0]
+//    .avm_write                     (avm_write),                     //output
+//    .avm_read                      (avm_read),                      //output
+//    .avm_waitrequest               (avm_waitrequest),               //input
+//    .avm_readdatavalid             (avm_readdatavalid),             //input
+//    .avm_readdata                  (avm_readdata),                  //input [31:0]
+
+    //RESP:
+    .writeburst_do              (writeburst_do),           //input
+    .writeburst_done            (writeburst_done),         //output
+    
+    .writeburst_address         (writeburst_address),      //input [31:0]
+    .writeburst_dword_length    (writeburst_dword_length), //input [1:0]
+    .writeburst_byteenable_0    (writeburst_byteenable_0), //input [3:0]
+    .writeburst_byteenable_1    (writeburst_byteenable_1), //input [3:0]
+    .writeburst_data            (writeburst_data),         //input [55:0]
+    //END
+    
+    //RESP:
+    .writeline_do               (writeline_do),            //input
+    .writeline_done             (writeline_done),          //output
+    
+    .writeline_address          (writeline_address),       //input [31:0]
+    .writeline_line             (writeline_line),          //input [127:0]
+    //END
+    
+    //RESP:
+    .readburst_do               (readburst_do),            //input
+    .readburst_done             (readburst_done),          //output
+    
+    .readburst_address          (readburst_address),       //input  [31:0]
+    .readburst_dword_length     (readburst_dword_length),  //input  [1:0]
+    .readburst_byte_length      (readburst_byte_length),   //input [3:0]
+    .readburst_data             (readburst_data),          //output [95:0]
+    //END
+    
+    //RESP:
+    .readline_do                (readline_do),             //input
+    .readline_done              (readline_done),           //output
+    
+    .readline_address           (readline_address),        //input [31:0]
+    .readline_line              (readline_line),           //output [127:0]
+    //END
+    
+    //RESP:
+    .readcode_do                (readcode_do),             //input
+    .readcode_done              (readcode_done),           //output
+
+    .readcode_address           (readcode_address),        //input [31:0]
+    .readcode_line              (readcode_line),           //output [127:0]
+    .readcode_partial           (readcode_partial),        //output [31:0]
+    .readcode_partial_done      (readcode_partial_done),   //output
+    //END
     .state_transducer             (state_transducer)
 );
 

@@ -138,16 +138,64 @@ module memory(
     input               wr_reset,
     
     // avalon master
-    output      [31:2]  avm_address,
-    output      [31:0]  avm_writedata,
-    output      [3:0]   avm_byteenable,
-    output      [2:0]   avm_burstcount,
-    output              avm_write,
-    output              avm_read,
+    //output      [31:2]  avm_address,
+    //output      [31:0]  avm_writedata,
+    //output      [3:0]   avm_byteenable,
+    //output      [2:0]   avm_burstcount,
+    //output              avm_write,
+    //output              avm_read,
+    //
+    //input               avm_waitrequest,
+    //input               avm_readdatavalid,
+    //input       [31:0]  avm_readdata,
+
+    //RESP:
+    output              writeburst_do,
+    input               writeburst_done,
     
-    input               avm_waitrequest,
-    input               avm_readdatavalid,
-    input       [31:0]  avm_readdata,
+    output      [31:0]  writeburst_address,
+    output      [1:0]   writeburst_dword_length,
+    output      [3:0]   writeburst_byteenable_0,
+    output      [3:0]   writeburst_byteenable_1,
+    output      [55:0]  writeburst_data,
+    //END
+    
+    //RESP:
+    output              writeline_do,
+    input               writeline_done,
+    
+    output      [31:0]  writeline_address,
+    output      [127:0] writeline_line,
+    //END
+    
+    //RESP:
+    output              readburst_do,
+    input               readburst_done,
+    
+    output      [31:0]  readburst_address,
+    output      [1:0]   readburst_dword_length,
+    output      [3:0]   readburst_byte_length,
+    input      [95:0]   readburst_data,
+    //END
+    
+    //RESP:
+    output              readline_do,
+    input               readline_done,
+    
+    output       [31:0] readline_address,
+    input      [127:0]  readline_line,
+    //END
+    
+    //RESP:
+    output              readcode_do,
+    input               readcode_done,
+    
+    output      [31:0]  readcode_address,
+    input      [127:0]  readcode_line,
+    input      [31:0]   readcode_partial,
+    input               readcode_partial_done,
+    //END
+
     output      [1:0]   state_transducer
 );
 
@@ -185,14 +233,14 @@ link_writeburst link_writeburst_inst(
     .req_writeburst_data            (req_writeburst_data),          //input [55:0]
     
     // writeburst RESP
-    .resp_writeburst_do             (resp_writeburst_do),           //output
-    .resp_writeburst_done           (resp_writeburst_done),         //input
+    .resp_writeburst_do             (writeburst_do),           //output
+    .resp_writeburst_done           (writeburst_done),         //input
     
-    .resp_writeburst_address        (resp_writeburst_address),      //output [31:0]
-    .resp_writeburst_dword_length   (resp_writeburst_dword_length), //output [1:0]
-    .resp_writeburst_byteenable_0   (resp_writeburst_byteenable_0), //output [3:0]
-    .resp_writeburst_byteenable_1   (resp_writeburst_byteenable_1), //output [3:0]
-    .resp_writeburst_data           (resp_writeburst_data)          //output [55:0]
+    .resp_writeburst_address        (writeburst_address),      //output [31:0]
+    .resp_writeburst_dword_length   (writeburst_dword_length), //output [1:0]
+    .resp_writeburst_byteenable_0   (writeburst_byteenable_0), //output [3:0]
+    .resp_writeburst_byteenable_1   (writeburst_byteenable_1), //output [3:0]
+    .resp_writeburst_data           (writeburst_data)          //output [55:0]
 );
 
 //------------------------------------------------------------------------------
@@ -219,11 +267,11 @@ link_writeline link_writeline_inst(
     .req_writeline_line     (req_writeline_line),       //input [127:0]
     
     // writeline RESP
-    .resp_writeline_do      (resp_writeline_do),        //output
-    .resp_writeline_done    (resp_writeline_done),      //input
+    .resp_writeline_do      (writeline_do),        //output
+    .resp_writeline_done    (writeline_done),      //input
     
-    .resp_writeline_address (resp_writeline_address),   //output [31:0]
-    .resp_writeline_line    (resp_writeline_line)       //output [127:0]
+    .resp_writeline_address (writeline_address),   //output [31:0]
+    .resp_writeline_line    (writeline_line)       //output [127:0]
 );
 
 //------------------------------------------------------------------------------
@@ -256,13 +304,13 @@ link_readburst link_readburst_inst(
     .req_readburst_data             (req_readburst_data),           //output [95:0]
     
     // readburst RESP
-    .resp_readburst_do              (resp_readburst_do),            //output
-    .resp_readburst_done            (resp_readburst_done),          //input
+    .resp_readburst_do              (readburst_do),            //output
+    .resp_readburst_done            (readburst_done),          //input
     
-    .resp_readburst_address         (resp_readburst_address),       //output [31:0]
-    .resp_readburst_dword_length    (resp_readburst_dword_length),  //output [1:0]
-    .resp_readburst_byte_length     (resp_readburst_byte_length),   //output [3:0]
-    .resp_readburst_data            (resp_readburst_data)           //input [95:0]
+    .resp_readburst_address         (readburst_address),       //output [31:0]
+    .resp_readburst_dword_length    (readburst_dword_length),  //output [1:0]
+    .resp_readburst_byte_length     (readburst_byte_length),   //output [3:0]
+    .resp_readburst_data            (readburst_data)           //input [95:0]
 );
 
 //------------------------------------------------------------------------------
@@ -290,11 +338,11 @@ link_readline link_readline_inst(
     .req_readline_line      (req_readline_line),    //output [127:0]
     
     // readline RESP
-    .resp_readline_do       (resp_readline_do),     //output
-    .resp_readline_done     (resp_readline_done),   //input
+    .resp_readline_do       (readline_do),     //output
+    .resp_readline_done     (readline_done),   //input
     
-    .resp_readline_address  (resp_readline_address),//output [31:0]
-    .resp_readline_line     (resp_readline_line)    //input [127:0]
+    .resp_readline_address  (readline_address),//output [31:0]
+    .resp_readline_line     (readline_line)    //input [127:0]
 );
 
 //------------------------------------------------------------------------------
@@ -327,13 +375,13 @@ link_readcode link_readcode_inst(
     .req_readcode_partial_done      (req_readcode_partial_done),  //output
     
     // readcode RESP
-    .resp_readcode_do               (resp_readcode_do),           //output
-    .resp_readcode_done             (resp_readcode_done),         //input
+    .resp_readcode_do               (readcode_do),           //output
+    .resp_readcode_done             (readcode_done),         //input
     
-    .resp_readcode_address          (resp_readcode_address),      //output [31:0]
-    .resp_readcode_line             (resp_readcode_line),         //input [127:0]
-    .resp_readcode_partial          (resp_readcode_partial),      //input [31:0]
-    .resp_readcode_partial_done     (resp_readcode_partial_done)  //input
+    .resp_readcode_address          (readcode_address),      //output [31:0]
+    .resp_readcode_line             (readcode_line),         //input [127:0]
+    .resp_readcode_partial          (readcode_partial),      //input [31:0]
+    .resp_readcode_partial_done     (readcode_partial_done)  //input
 );
 
 //------------------------------------------------------------------------------
@@ -507,71 +555,71 @@ wire            tlbcode_cache_disable;
 
 //------------------------------------------------------------------------------
 
-avalon_mem avalon_mem_inst(
-    // global
-    .clk                        (clk),
-    .rst_n                      (rst_n),
-    
-    //RESP:
-    .writeburst_do              (resp_writeburst_do),           //input
-    .writeburst_done            (resp_writeburst_done),         //output
-    
-    .writeburst_address         (resp_writeburst_address),      //input [31:0]
-    .writeburst_dword_length    (resp_writeburst_dword_length), //input [1:0]
-    .writeburst_byteenable_0    (resp_writeburst_byteenable_0), //input [3:0]
-    .writeburst_byteenable_1    (resp_writeburst_byteenable_1), //input [3:0]
-    .writeburst_data            (resp_writeburst_data),         //input [55:0]
-    //END
-    
-    //RESP:
-    .writeline_do               (resp_writeline_do),            //input
-    .writeline_done             (resp_writeline_done),          //output
-    
-    .writeline_address          (resp_writeline_address),       //input [31:0]
-    .writeline_line             (resp_writeline_line),          //input [127:0]
-    //END
-    
-    //RESP:
-    .readburst_do               (resp_readburst_do),            //input
-    .readburst_done             (resp_readburst_done),          //output
-    
-    .readburst_address          (resp_readburst_address),       //input  [31:0]
-    .readburst_dword_length     (resp_readburst_dword_length),  //input  [1:0]
-    .readburst_byte_length      (resp_readburst_byte_length),   //input [3:0]
-    .readburst_data             (resp_readburst_data),          //output [95:0]
-    //END
-    
-    //RESP:
-    .readline_do                (resp_readline_do),             //input
-    .readline_done              (resp_readline_done),           //output
-    
-    .readline_address           (resp_readline_address),        //input [31:0]
-    .readline_line              (resp_readline_line),           //output [127:0]
-    //END
-    
-    //RESP:
-    .readcode_do                (resp_readcode_do),             //input
-    .readcode_done              (resp_readcode_done),           //output
-
-    .readcode_address           (resp_readcode_address),        //input [31:0]
-    .readcode_line              (resp_readcode_line),           //output [127:0]
-    .readcode_partial           (resp_readcode_partial),        //output [31:0]
-    .readcode_partial_done      (resp_readcode_partial_done),   //output
-    //END
-    
-    // avalon master
-    .avm_address                (avm_address),                  //output [31:0]
-    .avm_writedata              (avm_writedata),                //output [31:0]
-    .avm_byteenable             (avm_byteenable),               //output [3:0]
-    .avm_burstcount             (avm_burstcount),               //output [2:0]
-    .avm_write                  (avm_write),                    //output
-    .avm_read                   (avm_read),                     //output
-    
-    .avm_waitrequest            (avm_waitrequest),              //input
-    .avm_readdatavalid          (avm_readdatavalid),            //input
-    .avm_readdata               (avm_readdata),                  //input [31:0]
-    .state_transducer           (state_transducer)
-);
+//avalon_mem avalon_mem_inst(
+//    // global
+//    .clk                        (clk),
+//    .rst_n                      (rst_n),
+//    
+//    //RESP:
+//    .writeburst_do              (resp_writeburst_do),           //input
+//    .writeburst_done            (resp_writeburst_done),         //output
+//    
+//    .writeburst_address         (resp_writeburst_address),      //input [31:0]
+//    .writeburst_dword_length    (resp_writeburst_dword_length), //input [1:0]
+//    .writeburst_byteenable_0    (resp_writeburst_byteenable_0), //input [3:0]
+//    .writeburst_byteenable_1    (resp_writeburst_byteenable_1), //input [3:0]
+//    .writeburst_data            (resp_writeburst_data),         //input [55:0]
+//    //END
+//    
+//    //RESP:
+//    .writeline_do               (resp_writeline_do),            //input
+//    .writeline_done             (resp_writeline_done),          //output
+//    
+//    .writeline_address          (resp_writeline_address),       //input [31:0]
+//    .writeline_line             (resp_writeline_line),          //input [127:0]
+//    //END
+//    
+//    //RESP:
+//    .readburst_do               (resp_readburst_do),            //input
+//    .readburst_done             (resp_readburst_done),          //output
+//    
+//    .readburst_address          (resp_readburst_address),       //input  [31:0]
+//    .readburst_dword_length     (resp_readburst_dword_length),  //input  [1:0]
+//    .readburst_byte_length      (resp_readburst_byte_length),   //input [3:0]
+//    .readburst_data             (resp_readburst_data),          //output [95:0]
+//    //END
+//    
+//    //RESP:
+//    .readline_do                (resp_readline_do),             //input
+//    .readline_done              (resp_readline_done),           //output
+//    
+//    .readline_address           (resp_readline_address),        //input [31:0]
+//    .readline_line              (resp_readline_line),           //output [127:0]
+//    //END
+//    
+//    //RESP:
+//    .readcode_do                (resp_readcode_do),             //input
+//    .readcode_done              (resp_readcode_done),           //output
+//
+//    .readcode_address           (resp_readcode_address),        //input [31:0]
+//    .readcode_line              (resp_readcode_line),           //output [127:0]
+//    .readcode_partial           (resp_readcode_partial),        //output [31:0]
+//    .readcode_partial_done      (resp_readcode_partial_done),   //output
+//    //END
+//    
+//    // avalon master
+//    .avm_address                (avm_address),                  //output [31:0]
+//    .avm_writedata              (avm_writedata),                //output [31:0]
+//    .avm_byteenable             (avm_byteenable),               //output [3:0]
+//    .avm_burstcount             (avm_burstcount),               //output [2:0]
+//    .avm_write                  (avm_write),                    //output
+//    .avm_read                   (avm_read),                     //output
+//    
+//    .avm_waitrequest            (avm_waitrequest),              //input
+//    .avm_readdatavalid          (avm_readdatavalid),            //input
+//    .avm_readdata               (avm_readdata),                  //input [31:0]
+//    .state_transducer           (state_transducer)
+//);
 
 //------------------------------------------------------------------------------
 
