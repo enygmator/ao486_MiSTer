@@ -148,9 +148,23 @@ module memory(
     input               avm_waitrequest,
     input               avm_readdatavalid,
     input       [31:0]  avm_readdata,
-    output      [1:0]   state_transducer
+    output      [1:0]   state_transducer,
+
+    // new outputs for bypassing Avalon
+    output              request_readcode_do,
+    output      [31:0]  request_readcode_address,
+    output              request_readline_do,
+    output      [31:0]  request_readline_address,
+    output              request_readburst_do,
+    output      [31:0]  request_readburst_address
 );
 
+assign request_readcode_do = req_readcode_do;
+assign request_readcode_address = req_readcode_address;
+assign request_readline_do = req_readline_do;
+assign request_readline_address = req_readline_address;
+assign request_readburst_do = req_readburst_do;
+assign request_readburst_address = req_readburst_address;
 
 //------------------------------------------------------------------------------
 

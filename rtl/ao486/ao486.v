@@ -63,7 +63,19 @@ module ao486 (
     input               avalon_io_waitrequest,
 
     output  [31:0]      eip,
-    output  [1:0]       state_transducer
+    output  [1:0]       state_transducer,
+
+    //-------------------------------------------------------------------------- New signals to bypass Avalon (Outputs)
+    output              request_readcode_do,
+    output  [31:0]      request_readcode_address,
+    output              request_readline_do,
+    output  [31:0]      request_readline_address,
+    output              request_readburst_do,
+    output  [31:0]      request_readburst_address,
+
+    //-------------------------------------------------------------------------- New signals to bypass Avalon (Inputs)
+    input               request_readcode_done,
+    input  [127:0]      readcode_line
 );
 
 //------------------------------------------------------------------------------
@@ -561,7 +573,15 @@ memory memory_inst(
     .avm_waitrequest               (avm_waitrequest),               //input
     .avm_readdatavalid             (avm_readdatavalid),             //input
     .avm_readdata                  (avm_readdata),                  //input [31:0]
-    .state_transducer             (state_transducer)
+    .state_transducer             (state_transducer),
+
+    //New signals for bypassing Avalon
+    .request_readcode_do           (request_readcode_do),
+    .request_readcode_address      (request_readcode_address),
+    .request_readline_do           (request_readline_do),
+    .request_readline_address      (request_readline_address),
+    .request_readburst_do          (request_readburst_do),
+    .request_readburst_address      (request_readburst_address)
 );
 
 //------------------------------------------------------------------------------
