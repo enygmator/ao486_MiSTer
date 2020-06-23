@@ -156,7 +156,13 @@ module memory(
     output              request_readline_do,
     output      [31:0]  request_readline_address,
     output              request_readburst_do,
-    output      [31:0]  request_readburst_address
+    output      [31:0]  request_readburst_address,
+
+    // new inputs for bypassing Avalon
+    input       [127:0] transducer_ao486_readcode_line,
+    input       [31:0]  transducer_ao486_readcode_partial,
+    input               transducer_ao486_readcode_done,
+    input               transducer_ao486_readcode_partial_done
 );
 
 assign request_readcode_do = req_readcode_do;
@@ -706,12 +712,12 @@ icache icache_inst(
     
     //REQ:
     .readcode_do                (req_readcode_do),              //output
-    .readcode_done              (req_readcode_done),            //input
+    .readcode_done              (transducer_ao486_readcode_done),            //input
     
     .readcode_address           (req_readcode_address),         //output [31:0]
-    .readcode_line              (req_readcode_line),            //input [127:0]
-    .readcode_partial           (req_readcode_partial),         //input [31:0]
-    .readcode_partial_done      (req_readcode_partial_done),    //input
+    .readcode_line              (transducer_ao486_readcode_line),            //input [127:0]
+    .readcode_partial           (transducer_ao486_readcode_partial),         //input [31:0]
+    .readcode_partial_done      (transducer_ao486_readcode_partial_done),    //input
     //END
     
     //REQ:

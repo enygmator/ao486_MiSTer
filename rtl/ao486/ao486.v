@@ -74,8 +74,10 @@ module ao486 (
     output  [31:0]      request_readburst_address,
 
     //-------------------------------------------------------------------------- New signals to bypass Avalon (Inputs)
-    input               request_readcode_done,
-    input  [127:0]      readcode_line
+    input               transducer_ao486_readcode_done,
+    input  [127:0]      transducer_ao486_readcode_line,
+    input  [31:0]       transducer_ao486_readcode_partial,
+    input               transducer_ao486_readcode_partial_done 
 );
 
 //------------------------------------------------------------------------------
@@ -573,15 +575,21 @@ memory memory_inst(
     .avm_waitrequest               (avm_waitrequest),               //input
     .avm_readdatavalid             (avm_readdatavalid),             //input
     .avm_readdata                  (avm_readdata),                  //input [31:0]
-    .state_transducer             (state_transducer),
+    .state_transducer              (state_transducer),
 
-    //New signals for bypassing Avalon
+    //New signals for bypassing Avalon (Outputs to TRI)
     .request_readcode_do           (request_readcode_do),
     .request_readcode_address      (request_readcode_address),
     .request_readline_do           (request_readline_do),
     .request_readline_address      (request_readline_address),
     .request_readburst_do          (request_readburst_do),
-    .request_readburst_address      (request_readburst_address)
+    .request_readburst_address     (request_readburst_address),
+
+    //New signals for bypassing Avalon (Inputs from TRI)
+    .transducer_ao486_readcode_line         (transducer_ao486_readcode_line),
+    .transducer_ao486_readcode_partial      (transducer_ao486_readcode_partial),
+    .transducer_ao486_readcode_done         (transducer_ao486_readcode_done),
+    .transducer_ao486_readcode_partial_done (transducer_ao486_readcode_partial_done) 
 );
 
 //------------------------------------------------------------------------------
