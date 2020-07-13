@@ -66,18 +66,22 @@ module ao486 (
     output  [1:0]       state_transducer,
 
     //-------------------------------------------------------------------------- New signals to bypass Avalon (Outputs)
-    output              request_readcode_do,
-    output  [31:0]      request_readcode_address,
-    output              request_readline_do,
-    output  [31:0]      request_readline_address,
-    output              request_readburst_do,
-    output  [31:0]      request_readburst_address,
+    output              ifill_req_readcode_do,
+    output  [31:0]      ifill_req_readcode_address,
+    output              store_req_writeburst_do,
+    output  [31:0]      store_req_writeburst_address,
+    output  [1:0]       store_req_writeburst_dword_length,
+    output  [55:0]      store_req_writeburst_data,
+    output  [3:0]       store_req_writeburst_length,
+    output              load_req_readburst_do,
+    output  [31:0]      load_req_readburst_address,
 
     //-------------------------------------------------------------------------- New signals to bypass Avalon (Inputs)
     input               transducer_ao486_readcode_done,
     input  [127:0]      transducer_ao486_readcode_line,
     input  [31:0]       transducer_ao486_readcode_partial,
-    input               transducer_ao486_readcode_partial_done 
+    input               transducer_ao486_readcode_partial_done,
+    input               transducer_ao486_writeburst_done 
 );
 
 //------------------------------------------------------------------------------
@@ -578,18 +582,22 @@ memory memory_inst(
     .state_transducer              (state_transducer),
 
     //New signals for bypassing Avalon (Outputs to TRI)
-    .request_readcode_do           (request_readcode_do),
-    .request_readcode_address      (request_readcode_address),
-    .request_readline_do           (request_readline_do),
-    .request_readline_address      (request_readline_address),
-    .request_readburst_do          (request_readburst_do),
-    .request_readburst_address     (request_readburst_address),
+    .ifill_req_readcode_do             (ifill_req_readcode_do),
+    .ifill_req_readcode_address        (ifill_req_readcode_address),
+    .store_req_writeburst_do           (store_req_writeburst_do),
+    .store_req_writeburst_address      (store_req_writeburst_address),
+    .store_req_writeburst_dword_length (store_req_writeburst_dword_length),
+    .store_req_writeburst_data         (store_req_writeburst_data),
+    .store_req_writeburst_length       (store_req_writeburst_length),
+    .load_req_readburst_do             (load_req_readburst_do),
+    .load_req_readburst_address        (load_req_readburst_address),
 
     //New signals for bypassing Avalon (Inputs from TRI)
     .transducer_ao486_readcode_line         (transducer_ao486_readcode_line),
     .transducer_ao486_readcode_partial      (transducer_ao486_readcode_partial),
     .transducer_ao486_readcode_done         (transducer_ao486_readcode_done),
-    .transducer_ao486_readcode_partial_done (transducer_ao486_readcode_partial_done) 
+    .transducer_ao486_readcode_partial_done (transducer_ao486_readcode_partial_done), 
+    .transducer_ao486_writeburst_done       (transducer_ao486_writeburst_done)     
 );
 
 //------------------------------------------------------------------------------

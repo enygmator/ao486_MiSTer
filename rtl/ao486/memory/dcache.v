@@ -89,6 +89,7 @@ module dcache(
     output      [3:0]   writeburst_byteenable_0,
     output      [3:0]   writeburst_byteenable_1,
     output      [55:0]  writeburst_data,
+    output      [3:0]   writeburst_length,
     //END
     
     output              dcachetoicache_write_do,
@@ -143,6 +144,7 @@ wire [127:0]    dcache_writeline_line;
 assign writeline_do         = dcache_writeline_do || control_ram_writeline_do;
 assign writeline_address    = (dcache_writeline_do)? dcache_writeline_address : control_ram_writeline_address;
 assign writeline_line       = (dcache_writeline_do)? dcache_writeline_line    : control_ram_writeline_line;
+assign writeburst_length    = length;
 
 assign dcache_busy = state != STATE_IDLE;
 

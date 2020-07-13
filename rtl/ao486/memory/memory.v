@@ -151,26 +151,33 @@ module memory(
     output      [1:0]   state_transducer,
 
     // new outputs for bypassing Avalon
-    output              request_readcode_do,
-    output      [31:0]  request_readcode_address,
-    output              request_readline_do,
-    output      [31:0]  request_readline_address,
-    output              request_readburst_do,
-    output      [31:0]  request_readburst_address,
+    output              ifill_req_readcode_do,
+    output  [31:0]      ifill_req_readcode_address,
+    output              store_req_writeburst_do,
+    output  [31:0]      store_req_writeburst_address,
+    output  [1:0]       store_req_writeburst_dword_length,
+    output  [55:0]      store_req_writeburst_data,
+    output  [3:0]       store_req_writeburst_length,
+    output              load_req_readburst_do,
+    output  [31:0]      load_req_readburst_address,
 
     // new inputs for bypassing Avalon
     input       [127:0] transducer_ao486_readcode_line,
     input       [31:0]  transducer_ao486_readcode_partial,
     input               transducer_ao486_readcode_done,
-    input               transducer_ao486_readcode_partial_done
+    input               transducer_ao486_readcode_partial_done,
+    input               transducer_ao486_writeburst_done
 );
 
-assign request_readcode_do = req_readcode_do;
-assign request_readcode_address = req_readcode_address;
-assign request_readline_do = req_readline_do;
-assign request_readline_address = req_readline_address;
-assign request_readburst_do = req_readburst_do;
-assign request_readburst_address = req_readburst_address;
+assign ifill_req_readcode_do = req_readcode_do;
+assign ifill_req_readcode_address = req_readcode_address;
+assign store_req_writeburst_do = req_writeburst_do;
+assign store_req_writeburst_address = req_writeburst_address;
+assign store_req_writeburst_dword_length = req_writeburst_dword_length;
+assign store_req_writeburst_data = req_writeburst_data;
+assign store_req_writeburst_length = req_writeburst_length;
+assign load_req_readburst_do = req_readburst_do;
+assign load_req_readburst_address = req_readburst_address;
 
 //------------------------------------------------------------------------------
 
@@ -181,6 +188,7 @@ wire [1:0]  req_writeburst_dword_length;
 wire [3:0]  req_writeburst_byteenable_0;
 wire [3:0]  req_writeburst_byteenable_1;
 wire [55:0] req_writeburst_data;
+wire [3:0]  req_writeburst_length; 
 
 wire        resp_writeburst_do;
 wire        resp_writeburst_done;
@@ -649,13 +657,14 @@ dcache dcache_inst(
     
     //REQ:
     .writeburst_do              (req_writeburst_do),            //output
-    .writeburst_done            (req_writeburst_done),          //input
+    .writeburst_done            (transducer_ao486_writeburst_done),          //input
     
     .writeburst_address         (req_writeburst_address),       //output [31:0]
     .writeburst_dword_length    (req_writeburst_dword_length),  //output [1:0]
     .writeburst_byteenable_0    (req_writeburst_byteenable_0),  //output [3:0]
     .writeburst_byteenable_1    (req_writeburst_byteenable_1),  //output [3:0]
     .writeburst_data            (req_writeburst_data),          //output [55:0]
+    .writeburst_length          (req_writeburst_length),        //output [3:0]
     //END
     
     .dcachetoicache_write_do        (dcachetoicache_write_do),         //output
