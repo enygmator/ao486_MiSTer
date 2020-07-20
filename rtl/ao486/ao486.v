@@ -75,13 +75,16 @@ module ao486 (
     output  [3:0]       store_req_writeburst_length,
     output              load_req_readburst_do,
     output  [31:0]      load_req_readburst_address,
+    output  [3:0]       load_req_readburst_byte_length,
 
     //-------------------------------------------------------------------------- New signals to bypass Avalon (Inputs)
     input               transducer_ao486_readcode_done,
     input  [127:0]      transducer_ao486_readcode_line,
     input  [31:0]       transducer_ao486_readcode_partial,
     input               transducer_ao486_readcode_partial_done,
-    input               transducer_ao486_writeburst_done 
+    input               transducer_ao486_writeburst_done,
+    input               transducer_ao486_readburst_done,
+    input  [95:0]       transducer_ao486_readburst_data 
 );
 
 //------------------------------------------------------------------------------
@@ -591,13 +594,16 @@ memory memory_inst(
     .store_req_writeburst_length       (store_req_writeburst_length),
     .load_req_readburst_do             (load_req_readburst_do),
     .load_req_readburst_address        (load_req_readburst_address),
+    .load_req_readburst_byte_length    (load_req_readburst_byte_length),
 
     //New signals for bypassing Avalon (Inputs from TRI)
     .transducer_ao486_readcode_line         (transducer_ao486_readcode_line),
     .transducer_ao486_readcode_partial      (transducer_ao486_readcode_partial),
     .transducer_ao486_readcode_done         (transducer_ao486_readcode_done),
     .transducer_ao486_readcode_partial_done (transducer_ao486_readcode_partial_done), 
-    .transducer_ao486_writeburst_done       (transducer_ao486_writeburst_done)     
+    .transducer_ao486_writeburst_done       (transducer_ao486_writeburst_done),
+    .transducer_ao486_readburst_done        (transducer_ao486_readburst_done),
+    .transducer_ao486_readburst_data        (transducer_ao486_readburst_data)    
 );
 
 //------------------------------------------------------------------------------

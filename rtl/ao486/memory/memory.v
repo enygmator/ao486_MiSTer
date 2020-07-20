@@ -160,13 +160,16 @@ module memory(
     output  [3:0]       store_req_writeburst_length,
     output              load_req_readburst_do,
     output  [31:0]      load_req_readburst_address,
+    output  [3:0]       load_req_readburst_byte_length,
 
     // new inputs for bypassing Avalon
     input       [127:0] transducer_ao486_readcode_line,
     input       [31:0]  transducer_ao486_readcode_partial,
     input               transducer_ao486_readcode_done,
     input               transducer_ao486_readcode_partial_done,
-    input               transducer_ao486_writeburst_done
+    input               transducer_ao486_writeburst_done,
+    input               transducer_ao486_readburst_done,
+    input       [95:0]  transducer_ao486_readburst_data
 );
 
 assign ifill_req_readcode_do = req_readcode_do;
@@ -178,6 +181,7 @@ assign store_req_writeburst_data = req_writeburst_data;
 assign store_req_writeburst_length = req_writeburst_length;
 assign load_req_readburst_do = req_readburst_do;
 assign load_req_readburst_address = req_readburst_address;
+assign load_req_readburst_byte_length = req_readburst_byte_length;
 
 //------------------------------------------------------------------------------
 
@@ -639,12 +643,12 @@ dcache dcache_inst(
     
     //REQ:
     .readburst_do               (req_readburst_do),             //output
-    .readburst_done             (req_readburst_done),           //input
+    .readburst_done             (transducer_ao486_readburst_done),           //input
     
     .readburst_address          (req_readburst_address),        //output [31:0]
     .readburst_dword_length     (req_readburst_dword_length),   //output [1:0]
     .readburst_byte_length      (req_readburst_byte_length),    //output [3:0]
-    .readburst_data             (req_readburst_data),           //input [95:0]
+    .readburst_data             (transducer_ao486_readburst_data),           //input [95:0]
     //END
     
     //REQ:
