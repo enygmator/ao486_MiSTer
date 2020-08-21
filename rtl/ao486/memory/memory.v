@@ -155,7 +155,6 @@ module memory(
     output  [31:0]      ifill_req_readcode_address,
     output              store_req_writeburst_do,
     output  [31:0]      store_req_writeburst_address,
-    output  [1:0]       store_req_writeburst_dword_length,
     output  [55:0]      store_req_writeburst_data,
     output  [3:0]       store_req_writeburst_length,
     output              load_req_readburst_do,
@@ -176,12 +175,38 @@ assign ifill_req_readcode_do = req_readcode_do;
 assign ifill_req_readcode_address = req_readcode_address;
 assign store_req_writeburst_do = req_writeburst_do;
 assign store_req_writeburst_address = req_writeburst_address;
-assign store_req_writeburst_dword_length = req_writeburst_dword_length;
 assign store_req_writeburst_data = req_writeburst_data;
 assign store_req_writeburst_length = req_writeburst_length;
 assign load_req_readburst_do = req_readburst_do;
 assign load_req_readburst_address = req_readburst_address;
 assign load_req_readburst_byte_length = req_readburst_byte_length;
+
+always @(posedge clk) begin
+    if(ifill_req_readcode_do) begin
+    $display("_do triggered for ifill: time=%0t address=%0h", $time, ifill_req_readcode_address);
+    end
+end
+always @(posedge clk) begin
+    if(store_req_writeburst_do) begin
+    $display("_do triggered for store: time=%0t address=%0h length=%0h data=%0h", $time, store_req_writeburst_address, store_req_writeburst_length, store_req_writeburst_data);
+    end
+end
+always @(posedge clk) begin
+    if(load_req_readburst_do) begin
+    $display("_do triggered for load: time=%0t address=%0h length=%0h", $time, load_req_readburst_address, load_req_readburst_byte_length);
+    end
+end
+
+always @(posedge clk) begin
+    if(transducer_ao486_readcode_done) begin
+    $display("_done triggered for ifill: time=%0t readcode_line=%0h", $time, transducer_ao486_readcode_line);
+    end
+end
+always @(posedge clk) begin
+    if(transducer_ao486_readburst_done) begin
+    $display("_done triggered for load: time=%0t readburst_data=%0h", $time, transducer_ao486_readburst_data);
+    end
+end
 
 //------------------------------------------------------------------------------
 
