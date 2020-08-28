@@ -157,9 +157,14 @@ module memory(
     output  [31:0]      store_req_writeburst_address,
     output  [55:0]      store_req_writeburst_data,
     output  [3:0]       store_req_writeburst_length,
+    output              store_req_writeline_do,
+    output  [31:0]      store_req_writeline_address,
+    output  [127:0]     store_req_writeline_line,
     output              load_req_readburst_do,
     output  [31:0]      load_req_readburst_address,
     output  [3:0]       load_req_readburst_byte_length,
+    output              load_req_readline_do,
+    output  [31:0]      load_req_readline_address,
 
     // new inputs for bypassing Avalon
     input       [127:0] transducer_ao486_readcode_line,
@@ -167,8 +172,11 @@ module memory(
     input               transducer_ao486_readcode_done,
     input               transducer_ao486_readcode_partial_done,
     input               transducer_ao486_writeburst_done,
+    input               transducer_ao486_writeline_done,
     input               transducer_ao486_readburst_done,
-    input       [95:0]  transducer_ao486_readburst_data
+    input       [95:0]  transducer_ao486_readburst_data,
+    input               transducer_ao486_readline_done,
+    input       [127:0] transducer_ao486_readline_line
 );
 
 assign ifill_req_readcode_do = req_readcode_do;
@@ -177,9 +185,14 @@ assign store_req_writeburst_do = req_writeburst_do;
 assign store_req_writeburst_address = req_writeburst_address;
 assign store_req_writeburst_data = req_writeburst_data;
 assign store_req_writeburst_length = req_writeburst_length;
+assign store_req_writeline_do = req_writeline_do;
+assign store_req_writeline_address = req_writeline_address;
+assign store_req_writeline_line = req_writeline_line;
 assign load_req_readburst_do = req_readburst_do;
 assign load_req_readburst_address = req_readburst_address;
 assign load_req_readburst_byte_length = req_readburst_byte_length;
+assign load_req_readline_do = req_readline_do;
+assign load_req_readline_address = req_readline_address;
 
 always @(posedge clk) begin
     if(ifill_req_readcode_do) begin
@@ -660,10 +673,10 @@ dcache dcache_inst(
     
     //REQ:
     .readline_do            (req_readline_do),      //output
-    .readline_done          (req_readline_done),    //input
+    .readline_done          (transducer_ao486_readline_done),    //input
     
     .readline_address       (req_readline_address),   //output [31:0]
-    .readline_line          (req_readline_line),      //input [127:0]
+    .readline_line          (transducer_ao486_readline_line),      //input [127:0]
     //END
     
     //REQ:
@@ -678,7 +691,7 @@ dcache dcache_inst(
     
     //REQ:
     .writeline_do               (req_writeline_do),         //output
-    .writeline_done             (req_writeline_done),       //input
+    .writeline_done             (transducer_ao486_writeline_done),       //input
     
     .writeline_address          (req_writeline_address),    //output [31:0]
     .writeline_line             (req_writeline_line),       //output [127:0]
