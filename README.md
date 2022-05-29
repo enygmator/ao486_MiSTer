@@ -1,4 +1,4 @@
-# ao486 port for MiSTer by Sorgelig.
+# ao486 port for MiSTer by Sorgelig. - modified for BYOC
 
 Basically it's 486 compatible core, but not fast.
 Still it's a great emulator for very old DOS games/apps. 
